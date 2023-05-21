@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -36,21 +36,85 @@ async function run() {
       
     })
 
+    
     app.get('/alltoy', async (req, res) => {
       let toy;
-      console.log(req,query,sort)
-      if(req,query.sort = "all"){
-        toy = await legoCollection.find().limit(20).toArray();
+      console.log(req.query.sort)
+      if(req.query.sort = "all"){
+        toy = await toyTownCollection.find().limit(20).toArray();
       } else{
-        toy = await legoCollection.find().limit(20).sort({ price: req.query.sort === 'desc' ? -1 : 1 }).toArray();
+        toy = await toyTownCollection.find().limit(20).sort({ price: req.query.sort === 'desc' ? -1 : 1 }).toArray();
       }
       res.send(toy);
 
-      
-      const result = await toyTownCollection.find().limit(20).toArray()
-      res.send(result);
+    })
+
+
+    app.get('/mytoy', async (req, res) => {
+      const { email } = req.query;
+          console.log(email)
+      toy = await toyTownCollection.find({ email }).toArray();
+      res.send(toy);
 
     })
+
+    app.get('/alltoy/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id : new ObjectId(id)}
+      const toy = await toyTownCollection.findOne(query)
+      res.send(toy);
+
+    })
+
+
+    
+    app.delete('/alltoy/:id' ,async (req, res)=>{
+      const id =req.params.id
+      const query = { _id : new ObjectId(id)}
+      const result = await legoCollection.deleteOne(query)
+      res.send(result)
+  })
+
+  app.patch('/alltoy/:id', async (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    const toy = await db.collection('products').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+
+    res.send(toy)
+  
+  })
+
+
+
+  app.get('/updatetoy/:id', async (req, res) => {
+    const id = req.params.id
+    const query = { _id : new ObjectId(id)}
+    const toy = await toyTownCollection.findOne(query)
+    res.send(toy);
+
+  })
+
+  app.get('/categories', async (req, res) => {
+
+    const categories = await toyTownCollection.find({}, { category: 1 }).toArray();
+
+    const differentCategories = [...new Set(categories.map((category) => category.category))];
+    res.send(differentCategories);
+    
+  });
+  app.get('/toycategory', async (req, res) => {
+    
+    // console.log()
+
+    // const query = { category: "cars" };
+    //   // const { category } = req.query;
+      const toy = await toyTownCollection.find(req.query).toArray(); // Use the category as the filter
+      
+      res.send(toy);
+    
+  });
+
+
 
     
 
