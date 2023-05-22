@@ -28,6 +28,20 @@ async function run() {
 
     const database = client.db('toyTown');
     const toyTownCollection = database.collection('addProducts');
+    const indexKeys = { name: 1, category: 1 };
+    const indexOptions = { name: "name" };
+    const result = await toyTownCollection.createIndex(indexKeys, indexOptions);
+    console.log(result);
+
+    // search
+    app.get("/getToysName/:text", async (req, res) => {
+      const text = req.params.text;
+      console.log(text)
+      const result = await toyTownCollection.find({ name: { $regex: text, $options: "i" } }).toArray();
+      res.send(result);
+    });
+
+
 
     app.post('/addtoy', async(req, res) => {
       const body = req.body
@@ -39,7 +53,7 @@ async function run() {
     
     app.get('/alltoy', async (req, res) => {
       let toy;
-      console.log(req.query.sort)
+      // console.log(req.query.sort)
       if(req.query.sort = "all"){
         toy = await toyTownCollection.find().limit(20).toArray();
       } else{
@@ -52,11 +66,23 @@ async function run() {
 
     app.get('/mytoy', async (req, res) => {
       const { email } = req.query;
-          console.log(email)
+          // console.log(email)
       toy = await toyTownCollection.find({ email }).toArray();
       res.send(toy);
 
     })
+
+
+    // sorting
+    app.get('/myToys', async (req, res) => {
+      const { email } = req.query;
+      console.log(email)
+      toys = await legoCollection.find({ email }).toArray();
+      res.send(toys);
+
+    })
+
+    
 
     app.get('/alltoy/:id', async (req, res) => {
       const id = req.params.id
@@ -86,7 +112,7 @@ async function run() {
 
 
 
-  app.get('/updatetoy/:id', async (req, res) => {
+  app.get('/updatetoys/:id', async (req, res) => {
     const id = req.params.id
     const query = { _id : new ObjectId(id)}
     const toy = await toyTownCollection.findOne(query)
