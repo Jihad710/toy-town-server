@@ -66,18 +66,17 @@ async function run() {
 
     app.get('/mytoy', async (req, res) => {
       const { email } = req.query;
-          // console.log(email)
       toy = await toyTownCollection.find({ email }).toArray();
       res.send(toy);
 
     })
 
 
-    // sorting
+    
     app.get('/mytoy', async (req, res) => {
       const { email } = req.query;
       console.log(email)
-      toys = await legoCollection.find({ email }).toArray();
+      toys = await toyTownCollection.find({ email }).toArray();
       res.send(toy);
 
     })
@@ -97,7 +96,7 @@ async function run() {
     app.delete('/alltoy/:id' ,async (req, res)=>{
       const id =req.params.id
       const query = { _id : new ObjectId(id)}
-      const result = await legoCollection.deleteOne(query)
+      const result = await toyTownCollection.deleteOne(query)
       res.send(result)
   })
 
@@ -105,7 +104,6 @@ async function run() {
     const { id } = req.params;
     const updateData = req.body;
     const toy = await db.collection('products').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
-
     res.send(toy)
   
   })
@@ -114,11 +112,14 @@ async function run() {
 
   app.get('/updatetoys/:id', async (req, res) => {
     const id = req.params.id
-    const query = { _id : new ObjectId(id)}
+    const query = { _id: new ObjectId(id)}
     const toy = await toyTownCollection.findOne(query)
     res.send(toy);
 
   })
+
+
+  
 
   app.get('/categories', async (req, res) => {
 
