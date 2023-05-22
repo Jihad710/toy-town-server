@@ -66,17 +66,8 @@ async function run() {
 
     app.get('/mytoy', async (req, res) => {
       const { email } = req.query;
-      toy = await toyTownCollection.find({ email }).toArray();
-      res.send(toy);
-
-    })
-
-
-    
-    app.get('/mytoy', async (req, res) => {
-      const { email } = req.query;
       console.log(email)
-      toys = await toyTownCollection.find({ email }).toArray();
+      toy = await toyTownCollection.find({ email }).toArray();
       res.send(toy);
 
     })
@@ -100,6 +91,8 @@ async function run() {
       res.send(result)
   })
 
+
+
   app.patch('/alltoy/:id', async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
@@ -110,7 +103,7 @@ async function run() {
 
 
 
-  app.get('/updatetoys/:id', async (req, res) => {
+  app.get('/updateToys/:id', async (req, res) => {
     const id = req.params.id
     const query = { _id: new ObjectId(id)}
     const toy = await toyTownCollection.findOne(query)
@@ -119,27 +112,67 @@ async function run() {
   })
 
 
-  
+  app.put('/updateToys/:id', async (req, res) => {
+    const id = req.params.id
+    const updateData = req.body
+    const query = { _id: new ObjectId(id) }
+    const toy = await toyTownCollection.updateOne(query, { $set: updateData });
 
+    res.send(toy);
+  });
+
+  
+  // find unique category
   app.get('/categories', async (req, res) => {
 
     const categories = await toyTownCollection.find({}, { category: 1 }).toArray();
 
-    const differentCategories = [...new Set(categories.map((category) => category.category))];
-    res.send(differentCategories);
-    
-  });
-  app.get('/toycategory', async (req, res) => {
-    
-    // console.log()
+    const uniqueCategories = [...new Set(categories.map((category) => category.category))];
+    res.send(uniqueCategories);
 
-    // const query = { category: "cars" };
-    //   // const { category } = req.query;
-      const toy = await toyTownCollection.find(req.query).toArray(); // Use the category as the filter
-      
-      res.send(toy);
-    
   });
+  
+  
+  app.get('/toybycategory', async (req, res) => {
+    const toy = await toyTownCollection.find(req.query).toArray();
+    
+    res.send(toy);
+  
+});
+
+
+  app.get("/photos", async (req, res) => {
+    const photos = await toyTownCollection.find().toArray();
+    res.send(photos);
+
+  })
+
+  app.get("/offer", async (req, res) => {
+
+
+    const options = {
+      sort: { price: -1 },
+
+    };
+
+    // Find the highest-priced toy
+    const toy = await legoCollection.findOne({}, options);
+    res.send(toy)
+  })
+
+  app.get("/review", async (req, res) => {
+
+
+    const options = {
+      sort: { applyDate: -1 },
+
+    };
+
+    // Find the highest-priced toy
+    const toy = await legoCollection.find({}, options).limit(4).toArray();
+    res.send(toy)
+  })
+
 
 
 
