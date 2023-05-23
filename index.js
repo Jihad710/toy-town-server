@@ -34,7 +34,7 @@ async function run() {
     console.log(result);
 
     // search
-    app.get("/getToysName/:text", async (req, res) => {
+    app.get('/getToysByText/:text', async (req, res) => {
       const text = req.params.text;
       console.log(text)
       const result = await toyTownCollection.find({ name: { $regex: text, $options: "i" } }).toArray();
@@ -84,7 +84,7 @@ async function run() {
 
 
     
-    app.delete('/alltoy/:id' ,async (req, res)=>{
+    app.delete('/alltoys/:id' ,async (req, res)=>{
       const id =req.params.id
       const query = { _id : new ObjectId(id)}
       const result = await toyTownCollection.deleteOne(query)
