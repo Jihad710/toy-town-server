@@ -122,7 +122,7 @@ async function run() {
   });
 
   
-  // find unique category
+
   app.get('/categories', async (req, res) => {
 
     const categories = await toyTownCollection.find({}, { category: 1 }).toArray();
