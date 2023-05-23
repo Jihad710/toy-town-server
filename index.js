@@ -34,7 +34,7 @@ async function run() {
     console.log(result);
 
     // search
-    app.get('/getToysByText/:text', async (req, res) => {
+    app.get("/getSearchByText/:text", async (req, res) => {
       const text = req.params.text;
       console.log(text)
       const result = await toyTownCollection.find({ name: { $regex: text, $options: "i" } }).toArray();
