@@ -141,43 +141,7 @@ async function run() {
 });
 
 
-  app.get("/photos", async (req, res) => {
-    const photos = await toyTownCollection.find().toArray();
-    res.send(photos);
-
-  })
-
-  app.get("/offer", async (req, res) => {
-
-
-    const options = {
-      sort: { price: -1 },
-
-    };
-
-    // Find the highest-priced toy
-    const toy = await legoCollection.findOne({}, options);
-    res.send(toy)
-  })
-
-  app.get("/review", async (req, res) => {
-
-
-    const options = {
-      sort: { applyDate: -1 },
-
-    };
-
-    // Find the highest-priced toy
-    const toy = await legoCollection.find({}, options).limit(4).toArray();
-    res.send(toy)
-  })
-
-
-
-
-    
-
+ 
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
